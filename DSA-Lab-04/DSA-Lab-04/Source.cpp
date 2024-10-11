@@ -1,4 +1,5 @@
 #include<iostream>
+#include<string>
 using namespace std;
 
 template<class Type>
@@ -101,6 +102,10 @@ int main() {
 			int item;
 			queue->remove(item);
 
+		}
+		else if (choice == 3) {
+			queue = 3;
+			cout << "I changed here";
 		}
 	} while (choice != 1 || choice != 2 || choice != 3);
 
