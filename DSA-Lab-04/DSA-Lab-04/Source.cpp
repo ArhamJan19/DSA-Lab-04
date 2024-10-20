@@ -1,109 +1,123 @@
-#include<iostream>
+#include <iostream>
+#include <sstream>
 using namespace std;
 
-template<class Type>
-class Queue {
-private:
-	int size
-		int front;
-	int rear;
-	Type* queue;
 
-
-public:
-	Queue(int size) {
-		front = -1;
-		rear = -1;
-		queue = new Type[size];
-	}
-	~Queue() {
-		delete[] queue;
-	}
-	void getQueue() {
-		for (int i = 0; i <= rear; i++) {
-			cout << "Element at " << i << " is " << queue[i] << endl;
-		}
-	}
-	bool isFull() {
-		return (rear == 9);
-	}
-	bool isEmpty() {
-		return(front == -1 && rear == -1);
-	}
-	void insert(Type item) {
-		if (isFull()) {
-			cout << endl << "Queue is Full" << endl;
-		}
-		else {
-			if (isEmpty()) {
-				rear++;
-				front++;
-				queue[rear] = item;
-				cout << item << " inserted" << endl;
-			}
-			else {
-				rear++;
-				queue[rear] = item;
-				cout << item << " inserted" << endl;
-			}
-		}
-	}
-	void remove(Type& item) {
-		if (isEmpty()) {
-			cout << endl << "The Queue is empty" << endl;
-		}
-		else {
-			if (front == 0 && rear == 0) {
-				cout << "item " << queue[front] << " removed" << endl;
-				item = queue[front];
-				front--;
-				rear--;
-			}
-			else if (front == rear) {
-				cout << "item " << queue[front] << " removed" << endl;
-				item = queue[front];
-				front = -1;
-				rear = -1;
-			}
-			else {
-				cout << "item " << queue[front] << " removed" << endl;
-				item = queue[front];
-				front++;
-			}
-
-		}
-	}
-};
-
-void Menu() {
-	cout << "1. Insert into the Queue." << endl;
-	cout << "2. Delete from the Queue." << endl;
-	cout << "3. Print the Queue." << endl;
-	cout << "4. Exit" << endl;
-	cout << "Enter your Choice : ";
+int getValidIntInput(const string& prompt) {
+    string input;
+    int value;
+    while (true) {
+        cout << prompt;
+        getline(cin, input);
+        stringstream ss(input);
+        if (ss >> value && ss.eof()) {
+            return value;
+        }
+        cout << "\nInvalid input, please enter a valid number.\n";
+    }
 }
 
+
+template <typename T>
+class LinearQueue {
+private:
+    T* queueArray;
+    int front;
+    int rear;
+    int capacity;
+
+public:
+    LinearQueue(int size) {
+        capacity = size;
+        queueArray = new T[capacity];
+        front = -1;
+        rear = -1;
+    }
+
+    ~LinearQueue() {
+        delete[] queueArray;
+    }
+
+    bool isFull() {
+        return rear == capacity - 1;
+    }
+
+    bool isEmpty() {
+        return front == -1 || front > rear;
+    }
+
+    void insert(T value) {
+        if (isFull()) {
+            cout << "\nQueue is full. Cannot insert new elements.\n";
+            return;
+        }
+
+        if (front == -1) front = 0;
+        queueArray[++rear] = value;
+        cout << "\nInserted: " << value << endl;
+    }
+
+    void remove() {
+        if (isEmpty()) {
+            cout << "\nQueue is empty. No elements to remove.\n";
+            return;
+        }
+
+        cout << "\nRemoved: " << queueArray[front++] << endl;
+    }
+
+    void displayQueue() {
+        if (isEmpty()) {
+            cout << "\nQueue is empty.\n";
+        } else {
+            cout << "\nQueue elements: ";
+            for (int i = front; i <= rear; i++) {
+                cout << queueArray[i] << " ";
+            }
+            cout << endl;
+        }
+    }
+};
+
 int main() {
-	int choice;
-	Queue<int>* queue = new Queue<int>(10);
+    int size = getValidIntInput("Enter the size of the queue: ");
+    LinearQueue<int> queue(size);
 
-	do {
-		Menu();
-		cin >> choice;
+    bool running = true;
+    while (running) {
+        cout << "\n1. Insert";
+        cout << "\n2. Remove";
+        cout << "\n3. Display Queue";
+        cout << "\n4. Exit";
+        int choice = getValidIntInput("\nEnter your choice: ");
 
-		if (choice == 1) {
-			int item;
-			cout << "Enter the item you want to enter:  ";
-			cin >> item;
-			queue->insert(item);
-		}
-		else if (choice == 2) {
-			int item;
-			queue->remove(item);
+        switch (choice) {
+        case 1: {
+            if (!queue.isFull()) {
+                int value = getValidIntInput("Enter the value to insert: ");
+                queue.insert(value);
+            }
+            break;
+        }
 
-		}
-	} while (choice != 1 || choice != 2 || choice != 3);
+        case 2:
+            queue.remove();
+            break;
 
-		
-	return 0;
+        case 3:
+            queue.displayQueue();
+            break;
+
+        case 4:
+            running = false;
+            cout << "\nExiting the program.\n";
+            break;
+
+        default:
+            cout << "\nInvalid choice. Please select a valid option.\n";
+            break;
+        }
+    }
+
+    return 0;
 }
